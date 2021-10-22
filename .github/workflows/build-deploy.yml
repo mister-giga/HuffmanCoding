@@ -22,13 +22,13 @@ jobs:
     
     - run: dotnet publish HuffmanCoding.csproj -c Release
     - run: pwd
-    - run: ls -a
+    - run: ls bin/Release/net6.0/publish/ -a
 
     - name: Upload production-ready build files
       uses: actions/upload-artifact@v2
       with:
         name: production-files
-        path: ./HuffmanCoding/bin/Debug/net6.0/publish/wwwroot
+        path: ./bin/Release/net6.0/publish/wwwroot
   
   deploy:
     name: Deploy
@@ -41,10 +41,10 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: production-files
-        path: ./HuffmanCoding/bin/Debug/net6.0/publish/wwwroot
+        path: ./bin/Release/net6.0/publish/wwwroot
 
     - name: Deploy to gh-pages
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./HuffmanCoding/bin/Debug/net6.0/publish/wwwroot
+        publish_dir: ./bin/Release/net6.0/publish/wwwroot
