@@ -21,6 +21,8 @@ jobs:
         include-prerelease: true
     
     - run: dotnet publish HuffmanCoding.csproj -c Release
+    
+    - run: cp bin/Release/net6.0/publish/wwwroot/index.html bin/Release/net6.0/publish/wwwroot/404.html
     - run: pwd
     - run: ls bin/Release/net6.0/publish/ -a
 
