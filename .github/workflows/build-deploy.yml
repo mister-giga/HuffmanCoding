@@ -20,13 +20,13 @@ jobs:
         dotnet-version: '6.0.x'
         include-prerelease: true
     
-    - run: dotnet build HuffmanCoding.csproj
+    - run: dotnet publish HuffmanCoding.csproj -c Release
 
     - name: Upload production-ready build files
       uses: actions/upload-artifact@v2
       with:
         name: production-files
-        path: ./build
+        path: ./bin/Debug/net6.0/publish/wwwroot
   
   deploy:
     name: Deploy
@@ -39,7 +39,7 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: production-files
-        path: ./build
+        path: ./bin/Debug/net6.0/publish/wwwroot
 
     - name: Deploy to gh-pages
       uses: peaceiris/actions-gh-pages@v3
