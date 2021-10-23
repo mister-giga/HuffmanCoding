@@ -8,3 +8,9 @@
 @using Microsoft.JSInterop
 @using HuffmanCoding
 @using HuffmanCoding.Shared
+@using HuffmanCoding.Models;
+@using System.ComponentModel
+@inject Services.HuffmanCoder HC
+@inject NavigationManager NavigationManager
+@inject Services.PageStateValidator PageStateValidator; 
+@inject Models.CharInfoStore CharInfoStore;

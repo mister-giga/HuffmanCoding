@@ -1,0 +1,94 @@
+﻿@page "/filter"
+
+<PageTitle>Filter</PageTitle>
+<h4>Filter symbols (@totalCount)</h4>
+
+<div class="container">
+  <div class="row">
+    <div class="col">
+      Active
+    </div>
+    <div class="col">
+      Blocked
+    </div>
+  </div>
+  @for(int i = 0; i < Math.Max(actives.Count, blockeds.Count); i++)
+	{
+		<div class="row">
+			<div class="col">
+				@{var active = actives.ElementAtOrDefault(i);}
+				@if(active!=null)
+				{
+					<div class="input-group mb-3">
+						<span class="input-group-text" title="@((int)active.Char)" style="width:40px;display:block;text-align:center;">@active.Char</span>
+						<input type="text" class="form-control" readonly value="@($"{active.Count} ({GetPercentage(active)})")"/>
+						<button class="btn btn-outline-secondary" style="z-index:0;" type="button" @onclick="() => Block(active)">Block</button>
+					</div>
+				}
+			</div>
+			<div class="col">
+				@{var blocked = blockeds.ElementAtOrDefault(i);}
+				@if(blocked!=null)
+				{
+					<div class="input-group mb-3">
+						<span class="input-group-text" title="@((int)blocked.Char)" style="width:40px;display:block;text-align:center;">@blocked.Char</span>
+						<input type="text" class="form-control" readonly value="@blocked.Count"/>
+						<button class="btn btn-outline-secondary" style="z-index:0;" type="button" @onclick="() => Unblock(blocked)">Unblock</button>
+					</div>
+				}
+			</div>
+		 </div>
+	}
+</div>
+
+
+
+
+
+@code {
+	List<CharInfo> actives = new List<CharInfo>(), blockeds = new List<CharInfo>();
+	float totalCount = 0;
+	override protected void OnInitialized()
+	{
+		base.OnInitialized();
+
+		if (!PageStateValidator.NeedsInput())
+		{
+			foreach(var charItem in FixOrder(CharInfoStore.Enumerate()))
+			{
+				if (charItem.IsBlocked)
+					blockeds.Add(charItem);
+				else
+				{
+					actives.Add(charItem);
+					totalCount += charItem.Count;
+				}
+			}
+		}
+	}
+
+	string GetPercentage(CharInfo charInfo) => $"{charInfo.Count/totalCount:0.000}%";
+
+	void Block(CharInfo charInfo)
+	{
+		totalCount -= charInfo.Count;
+		actives.Remove(charInfo);
+		actives = FixOrder(actives).ToList();
+		blockeds.Add(charInfo);
+		blockeds = FixOrder(blockeds).ToList();
+		charInfo.IsBlocked = true;
+	}
+
+	void Unblock(CharInfo charInfo)
+	{
+		totalCount += charInfo.Count;
+		actives.Add(charInfo);
+		actives = FixOrder(actives).ToList();
+		blockeds.Remove(charInfo);
+		blockeds = FixOrder(blockeds).ToList();
+		charInfo.IsBlocked = false;
+	}
+
+
+	IEnumerable<CharInfo> FixOrder(IEnumerable<CharInfo> charInfos) => charInfos.OrderByDescending(x => x.Count).ThenBy(x => x.Char);
+}

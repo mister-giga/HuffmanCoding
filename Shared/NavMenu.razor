@@ -1,6 +1,8 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@implements IDisposable
+
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">HuffmanCoding</a>
+        <a class="navbar-brand" href="">Huffman Coding</a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -11,19 +13,27 @@
     <nav class="flex-column">
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
+                <span class="oi oi-text" aria-hidden="true"></span> Input
             </NavLink>
         </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="oi oi-plus" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="fetchdata">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
-            </NavLink>
-        </div>
+        @if (HC.IsAvailable)
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="filter">
+                    <span class="oi oi-check" aria-hidden="true"></span> Filter
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="code">
+                    <span class="oi oi-eye" aria-hidden="true"></span> Code
+                </NavLink>
+            </div>
+             <div class="nav-item px-3">
+                <NavLink class="nav-link" href="tree">
+                    <span class="oi oi-fork" aria-hidden="true"></span> Tree
+                </NavLink>
+            </div>
+        }
     </nav>
 </div>
 
@@ -35,5 +45,24 @@
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        HC.PropertyChanged += OnHCPropertyChanged;
+    }
+
+    public void Dispose()
+    {
+        HC.PropertyChanged -= OnHCPropertyChanged;
+    }
+
+    void OnHCPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if(e.PropertyName == nameof(HC.IsAvailable))
+        {
+            StateHasChanged();
+        }
     }
 }

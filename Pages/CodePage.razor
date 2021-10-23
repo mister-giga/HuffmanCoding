@@ -1,0 +1,43 @@
+﻿@page "/code"
+
+<PageTitle>Code</PageTitle>
+
+<h4>Binary code (@encoded.Length bits)</h4>
+
+<div style="display:flex">
+	<div style="flex: 0 0 130px;">
+		@foreach(var leaf in leaves)
+		{
+			<div class="input-group mb-3">
+				<span class="input-group-text" title="@((int)leaf.Char)" style="width:40px;display:block;text-align:center;">@leaf.Char</span>
+				<input type="text" class="form-control" readonly value="@leaf.Code"/>
+			</div>
+		}
+	</div>
+	<div style="word-break: break-all;margin-left:15px;">@encoded</div>
+</div>
+
+@code {
+	List<Leaf> leaves = new List<Leaf>();
+	string encoded = "";
+	override protected void OnInitialized()
+	{
+		base.OnInitialized();
+
+		if (!PageStateValidator.NeedsInput())
+		{
+			var t = CharInfoStore.ExtractTree();
+			var all = new List<Leaf>();
+			t.FillList(all);
+			leaves = all.Where(x => x.Char != null).OrderByDescending(x => x.Count).ThenBy(x => x.Char).ToList();
+			var dict = leaves.ToDictionary(x => x.Char.Value, x => x.Code, CharInfoStore.Comparer);
+			System.Text.StringBuilder b = new();
+			foreach(var charElement in HC.Input)
+			{
+				if (dict.TryGetValue(charElement, out var code))
+					b.Append(code);
+			}
+			encoded = b.ToString();
+		}
+	}
+}
