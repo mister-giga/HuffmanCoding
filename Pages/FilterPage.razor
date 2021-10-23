@@ -19,10 +19,10 @@
 				@{var active = actives.ElementAtOrDefault(i);}
 				@if(active!=null)
 				{
-					<div class="input-group mb-3">
-						<span class="input-group-text" title="@((int)active.Char)" style="width:40px;display:block;text-align:center;">@active.Char</span>
+					<div class="input-group input-group-sm mb-3">
+						<span class="input-group-text" title="@((int)active.Char)" style="width:26px;display:block;text-align:center;">@active.Char</span>
 						<input type="text" class="form-control" readonly value="@($"{active.Count} ({GetPercentage(active)})")"/>
-						<button class="btn btn-outline-secondary" style="z-index:0;" type="button" @onclick="() => Block(active)">Block</button>
+						<button title="Block" class="btn btn-outline-secondary" style="z-index:0;" type="button" @onclick="() => Block(active)"> <span class="oi oi-ban" aria-hidden="true"></span></button>
 					</div>
 				}
 			</div>
@@ -30,10 +30,10 @@
 				@{var blocked = blockeds.ElementAtOrDefault(i);}
 				@if(blocked!=null)
 				{
-					<div class="input-group mb-3">
-						<span class="input-group-text" title="@((int)blocked.Char)" style="width:40px;display:block;text-align:center;">@blocked.Char</span>
+					<div class="input-group input-group-sm mb-3">
+						<span class="input-group-text" title="@((int)blocked.Char)" style="width:26px;display:block;text-align:center;">@blocked.Char</span>
 						<input type="text" class="form-control" readonly value="@blocked.Count"/>
-						<button class="btn btn-outline-secondary" style="z-index:0;" type="button" @onclick="() => Unblock(blocked)">Unblock</button>
+						<button title="Unblock" class="btn btn-outline-secondary" style="z-index:0;" type="button" @onclick="() => Unblock(blocked)"> <span class="oi oi-lock-unlocked" aria-hidden="true"></span></button>
 					</div>
 				}
 			</div>
