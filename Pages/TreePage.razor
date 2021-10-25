@@ -1,14 +1,55 @@
 ﻿@page "/tree"
+@inject IJSRuntime JS
 
 <PageTitle>Tree</PageTitle>
-<h3>Tree view</h3>
-<h5>Coming soon...</h5>
+
+<div style="flex-grow:1;position:relative;">
+	<div id="graphviz_svg_div" style="width:100%;height:100%"/>
+</div>
+
 
 @code {
+	Leaf? topNode;
+	double radius = 40;
+	double distance = 30;
+	int lastRowCount = 0;
+
 	override protected void OnInitialized()
 	{
 		base.OnInitialized();
 
-		PageStateValidator.NeedsInput();
+		if(!PageStateValidator.NeedsInput())
+		{
+			topNode = CharInfoStore.ExtractTree();
+			if (topNode != null)
+			{
+				var lvl = topNode.GetLevelCount();
+				lastRowCount = lvl == 0 ? 0 : (int)Math.Pow(2, lvl - 1);
+			}
+		}
+	}
+
+	protected async override Task OnAfterRenderAsync(bool firstRender)
+	{
+		await base.OnAfterRenderAsync(firstRender);
+
+		if (firstRender)
+		{
+			if (topNode != null)
+			{
+				var visData = new VisData();
+				topNode.FillConnections(visData, 0);
+				var jsParam = System.Text.Json.JsonSerializer.Serialize(visData);
+				
+				try
+				{
+					await JS.InvokeVoidAsync("loadSvgGraph", jsParam);
+				}
+				catch (Exception ex)
+				{
+					Console.WriteLine(ex);
+				}
+			}
+		}
 	}
 }

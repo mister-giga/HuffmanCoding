@@ -70,6 +70,43 @@
         }
 
        
+        public int GetLevelCount()
+        {
+            return Math.Max(Left?.GetLevelCount() ?? 0, Right?.GetLevelCount() ?? 0) + 1;
+        }
 
+        public string Title
+        {
+            get
+            {
+                if (Char != null)
+                    return $"{Char} | {Count}";
+                return Count.ToString();
+            }
+        }
+
+        public string Id => GetHashCode().ToString();
+
+        public void FillConnections(VisData data, int level)
+        {
+            data.Nodes.Add(new VisNode 
+            {
+                Id = Id,
+                Label = Title,
+                Level = level
+            });
+
+            if(Left != null)
+            {
+                data.Connections.Add(new VisNodeConnection { From = Id, To = Left.Id });
+                Left.FillConnections(data, level + 1);
+            }
+
+            if (Right != null)
+            {
+                data.Connections.Add(new VisNodeConnection { From = Id, To = Right.Id });
+                Right.FillConnections(data, level + 1);
+            }
+        }
     }
 }
